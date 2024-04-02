@@ -44,7 +44,7 @@ obj-$(CONFIG_MSM_GLADIATOR_ERP) += gladiator_erp.o
 obj-$(CONFIG_QCOM_MINIDUMP) += msm_minidump.o minidump_log.o
 obj-$(CONFIG_QCOM_SECURE_BUFFER) += secure_buffer.o
 obj-$(CONFIG_QCOM_MEMORY_DUMP_V2) += memory_dump_v2.o
-obj-$(CONFIG_QCOM_WATCHDOG_V2) += watchdog_v2.o
+obj-$(CONFIG_QCOM_WATCHDOG_V2) += watchdog_v2.o oppo_watchdog_util.o
 obj-$(CONFIG_QPNP_PBS) += qpnp-pbs.o
 obj-$(CONFIG_ICNSS) += icnss.o
 obj-$(CONFIG_ICNSS_QMI) += icnss_qmi.o wlan_firmware_service_v01.o
@@ -123,3 +123,8 @@ obj-$(CONFIG_WCNSS_CORE) += wcnss/
 obj-$(CONFIG_RENAME_BLOCK_DEVICE) += rename_block_device.o
 obj-$(CONFIG_QTI_CRYPTO_COMMON) += crypto-qti-common.o
 obj-$(CONFIG_QTI_CRYPTO_TZ) += crypto-qti-tz.o
+ifeq ($(CONFIG_WINGTECH_EDIT),yes)
+#Lijie.Yang@ODM_WT.BSP.Kernel.Security.1941873, 2020/03/20, add for add secboot_fuse_reg & serial_num node in /proc to get fuse status and cpuid
+obj-y += serial_num.o
+obj-y += secboot_fuse.o
+endif
