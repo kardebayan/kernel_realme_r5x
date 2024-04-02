@@ -27,6 +27,7 @@
 #include <linux/of_platform.h>
 #include <linux/pm_opp.h>
 #include <linux/regulator/consumer.h>
+#include <soc/oppo/oppo_project.h>
 
 #include "clk.h"
 
@@ -3520,6 +3521,14 @@ static int __init clk_debug_init(void)
 	inited = 1;
 	mutex_unlock(&clk_debug_lock);
 
+#ifdef CONFIG_MACH_REALME_TRINKET
+//pengfei@BSP.CHG.Basic 2019/12/03 modify for power debug
+        if (oppo_daily_build() == true) {
+                debug_suspend = 1;
+        } else {
+                debug_suspend = 0;
+        }
+#endif /* CONFIG_MACH_REALME_TRINKET */
 	return 0;
 }
 late_initcall(clk_debug_init);
