@@ -681,7 +681,6 @@
 		qcom,max-pclk-frequency-khz = <675000>;
 
 		qcom,mst-enable;
-		qcom,dp-aux-bridge-sim = <&sde_dp_mst_sim>;
 		qcom,dsc-feature-enable;
 		qcom,fec-feature-enable;
 		qcom,widebus-enable;
