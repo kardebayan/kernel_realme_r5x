@@ -244,6 +244,12 @@ config ARCH_SDM429W
 	  If you do not wish to build a kernel that runs on this chipset,
 	  say 'N' here.
 
+config MACH_REALME_TRINKET
+	def_bool y
+
+config WINGTECH_EDIT
+	def_bool y
+
 config ARCH_REALTEK
 	bool "Realtek Platforms"
 	help
