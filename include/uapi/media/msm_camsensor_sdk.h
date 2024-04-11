@@ -1,6 +1,11 @@
 #ifndef __UAPI_LINUX_MSM_CAMSENSOR_SDK_H
 #define __UAPI_LINUX_MSM_CAMSENSOR_SDK_H
 
+#ifndef CONFIG_MACH_REALME_TRINKET
+/*Yingpiao.Lin@Camera.Drv, 20191025, add for android Q*/
+#define CONFIG_MACH_REALME_TRINKET
+#endif
+
 #include <linux/videodev2.h>
 
 #define KVERSION 0x1
@@ -56,6 +61,7 @@
 
 #define SECURE_CAM_RST_MODULES
 
+/*#ifdev CONFIG_MACH_REALME_TRINKET   shubham.makrariya@camera adding camera id 4*/
 enum msm_sensor_camera_id_t {
 	CAMERA_0,
 	CAMERA_1,
@@ -63,6 +69,7 @@ enum msm_sensor_camera_id_t {
 	CAMERA_3,
 	CAMERA_4,
 	CAMERA_5,
+	CAMERA_6,
 	MAX_CAMERAS,
 };
 
