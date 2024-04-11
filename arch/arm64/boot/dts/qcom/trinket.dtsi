@@ -413,6 +413,15 @@
 				vendor {
 					status = "disabled";
 				};
+				persist {
+					compatble = "android,persist";
+					dev = "/dev/block/platform/soc/4744000.sdhci/by-name/persist";
+					type = "ext4";
+					mnt_point = "/mnt/vendor/persist";
+					mnt_flags = "noatime,nosuid,nodev,barrier=1,discard";
+					fsmgr_flags = "wait,check";
+					status = "ok";
+				};
 			};
 		};
 	};
