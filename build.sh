@@ -18,7 +18,7 @@ gcc32bin=gcc32/bin/arm-linux-androideabi-as
 if ! [ -a $gcc32bin ]; then git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 gcc32
 fi
 rm -rf AnyKernel
-make O=out ARCH=arm64 vendor/trinket-perf_defconfig
+make O=out ARCH=arm64 vendor/r5x_defconfig
 PATH="${PWD}/clang/bin:${PATH}:${PWD}/gcc32/bin:${PATH}:${PWD}/gcc64/bin:${PATH}" \
 make -j$(nproc --all) O=out \
                       ARCH=arm64 \
