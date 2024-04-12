@@ -308,6 +308,12 @@ int anon_vma_clone(struct vm_area_struct *dst, struct vm_area_struct *src)
 	return -ENOMEM;
 }
 
+#ifdef CONFIG_MACH_REALME_TRINKET
+int happend_times = 0;		//total recursive fork times
+pid_t fork_pid_child = 0;				//last time recursive fork pid
+pid_t fork_pid_father = 0;				//last time recursive fork ppid
+#endif
+
 /*
  * Attach vma to its own anon_vma, as well as to the anon_vmas that
  * the corresponding VMA in the parent process is attached to.
