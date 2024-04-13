@@ -65,3 +65,14 @@
 #define CONFIG_TDM_DISABLE 1
 #define CONFIG_MI2S_DISABLE 1
 #define CONFIG_AUXPCM_DISABLE 1
+#ifndef CONFIG_MACH_REALME_TRINKET
+/*huanli.chang@PSW.MM.AudioDriver.Machine,2019/04/03, Add for audio bringup*/
+#define CONFIG_MACH_REALME_TRINKET
+#endif /* CONFIG_MACH_REALME_TRINKET */
+
+//#ifdef CONFIG_MACH_REALME_TRINKET
+/* huanli.chang@PSW.MM.AudioDriver.SmartPA, 2019/10/16, Add for tfa98xx */
+//#define CONFIG_SND_SOC_TFA9874 1
+/* He.Lu@PSW.MM.AudioDriver, 2019/12/18, Add for homer */
+//#define CONFIG_SND_SOC_SIA81XX 1
+//#endif /* CONFIG_MACH_REALME_TRINKET */
