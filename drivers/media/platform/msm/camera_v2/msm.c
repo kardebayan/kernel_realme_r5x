@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2018,2020 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -242,8 +242,6 @@ static void msm_pm_qos_remove_request(void)
 	*/
 	atomic_set(&qos_add_request_done,0);
 	#endif
-	if (!atomic_cmpxchg(&qos_add_request_done, 1, 0))
-		return;
 	pm_qos_remove_request(&msm_v4l2_pm_qos_request);
 }
 
