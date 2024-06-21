@@ -36,10 +36,6 @@
 #include <soc/qcom/restart.h>
 #include <soc/qcom/watchdog.h>
 #include <soc/qcom/minidump.h>
-#ifdef CONFIG_MACH_REALME_TRINKET
-//Fanhong.Kong@ProDrv.CHG,add 2018/12/1 for show_state_filter
-#include <linux/sched/debug.h>
-#endif /*CONFIG_MACH_REALME_TRINKET*/
 
 #define EMERGENCY_DLOAD_MAGIC1    0x322A4F99
 #define EMERGENCY_DLOAD_MAGIC2    0xC67E4350
@@ -69,8 +65,21 @@ static void scm_disable_sdi(void);
  * There is no API from TZ to re-enable the registers.
  * So the SDI cannot be re-enabled when it already by-passed.
  */
-static int download_mode = 1;
+static int download_mode = IS_ENABLED(CONFIG_QCOM_DLOAD_MODE);
 static bool force_warm_reboot;
+
+static int in_panic;
+
+static int panic_prep_restart(struct notifier_block *this,
+			      unsigned long event, void *ptr)
+{
+	in_panic = 1;
+	return NOTIFY_DONE;
+}
+
+static struct notifier_block panic_blk = {
+	.notifier_call	= panic_prep_restart,
+};
 
 #ifdef CONFIG_QCOM_DLOAD_MODE
 #define EDL_MODE_PROP "qcom,msm-imem-emergency_download_mode"
@@ -79,19 +88,8 @@ static bool force_warm_reboot;
 #define KASLR_OFFSET_PROP "qcom,msm-imem-kaslr_offset"
 #endif
 
-static int in_panic;
 static struct kobject dload_kobj;
-#ifndef CONFIG_MACH_REALME_TRINKET
-/*xing.xiong@BSP.Kernel.Driver, 2019/06/16, Add for minidump & fulldump control*/
 static int dload_type = SCM_DLOAD_FULLDUMP;
-#else
-#if defined(CONFIG_OPPO_DEBUG_BUILD)
-int dload_type = SCM_DLOAD_FULLDUMP;
-#else
-int dload_type = SCM_DLOAD_MINIDUMP;
-#endif
-#endif
-
 static void *dload_mode_addr;
 static void *dload_type_addr;
 static bool dload_mode_enabled;
@@ -100,29 +98,6 @@ static void *emergency_dload_mode_addr;
 static void __iomem *kaslr_imem_addr;
 #endif
 static bool scm_dload_supported;
-#ifdef CONFIG_MACH_REALME_TRINKET
-/*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/15,
- * Add for can disable minidump by rom update
- */
-static int romupdate_minidumpdisable = 0;
-static int __init minidump_disable_param(char *str)
-{
-	if (*str)
-		return 0;
-	romupdate_minidumpdisable = 1;
-	return 1;
-}
-__setup("minidump.disable", minidump_disable_param);
-
-//#ifdef CONFIG_MACH_REALME_TRINKET
-//Wanghao@BSP.Kernel.Function 2018/12/07, add for 5G modem dump issue
-int get_download_mode(void)
-{
-	return download_mode && (dload_type & SCM_DLOAD_FULLDUMP);
-}
-EXPORT_SYMBOL(get_download_mode);
-//#endif
-#endif /*CONFIG_MACH_REALME_TRINKET*/
 
 static int dload_set(const char *val, const struct kernel_param *kp);
 /* interface for exporting attributes */
@@ -141,17 +116,6 @@ struct reset_attribute {
 
 module_param_call(download_mode, dload_set, param_get_int,
 			&download_mode, 0644);
-
-static int panic_prep_restart(struct notifier_block *this,
-			      unsigned long event, void *ptr)
-{
-	in_panic = 1;
-	return NOTIFY_DONE;
-}
-
-static struct notifier_block panic_blk = {
-	.notifier_call	= panic_prep_restart,
-};
 
 int scm_set_dload_mode(int arg1, int arg2)
 {
@@ -175,46 +139,6 @@ int scm_set_dload_mode(int arg1, int arg2)
 				&desc);
 }
 
-#ifdef CONFIG_MACH_REALME_TRINKET
-//extern bool door_open;
-/*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/12,
- * Add for  enable full dload when combination keys
- */
-void oppo_switch_fulldump(int on)
-{
-	int ret;
-	if (!dload_type_addr)
-		return;
-
-	if (dload_mode_addr) {
-		__raw_writel(0xE47B337D, dload_mode_addr);
-		__raw_writel(0xCE14091A,
-			dload_mode_addr + sizeof(unsigned int));
-		mb();
-	}
-	if(on){
-		show_state_filter(TASK_UNINTERRUPTIBLE);
-		ret = scm_set_dload_mode(SCM_DLOAD_FULLDUMP, 0);
-		if (ret)
-			pr_err("Failed to set secure DLOAD mode: %d\n", ret);
-		dload_type = SCM_DLOAD_FULLDUMP;
-	}else{
-		ret = scm_set_dload_mode(SCM_DLOAD_MINIDUMP, 0);
-		if (ret)
-			pr_err("Failed to set secure DLOAD mode: %d\n", ret);
-		dload_type = SCM_DLOAD_MINIDUMP;
-	}
-
-	if(dload_type == SCM_DLOAD_MINIDUMP)
-		__raw_writel(EMMC_DLOAD_TYPE, dload_type_addr);
-	else
-		__raw_writel(0, dload_type_addr);
-	dload_mode_enabled = on;
-}
-EXPORT_SYMBOL(oppo_switch_fulldump);
-
-
-#endif /*CONFIG_MACH_REALME_TRINKET*/
 static void set_dload_mode(int on)
 {
 	int ret;
@@ -231,21 +155,6 @@ static void set_dload_mode(int on)
 	if (ret)
 		pr_err("Failed to set secure DLOAD mode: %d\n", ret);
 
-#ifdef CONFIG_MACH_REALME_TRINKET
-/*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/12,
- * Add for enable emmc dload when dload_type is minidump
- */
-	if (dload_type_addr) {
-		if(dload_type == SCM_DLOAD_MINIDUMP) {
-			__raw_writel(EMMC_DLOAD_TYPE, dload_type_addr);
-			if (!on)
-				scm_disable_sdi();
-		} else {
-			__raw_writel(0, dload_type_addr);
-		}
-	}
-#endif /*CONFIG_MACH_REALME_TRINKET*/
-
 	dload_mode_enabled = on;
 }
 
@@ -253,14 +162,6 @@ static bool get_dload_mode(void)
 {
 	return dload_mode_enabled;
 }
-
-#ifdef CONFIG_MACH_REALME_TRINKET
-/* yanwu@TECH.Storage.FS 2019/09/13, flush device cache in panic if necessary */
-bool is_fulldump_enable(void)
-{
-	return download_mode && (dload_type & SCM_DLOAD_FULLDUMP);
-}
-#endif
 
 static void enable_emergency_dload_mode(void)
 {
@@ -410,18 +311,12 @@ static void msm_restart_prepare(const char *cmd)
 	}
 
 #ifdef CONFIG_MACH_REALME_TRINKET
-//Fanhong.Kong@PSW.BSP.CHG,add 2018/3/25 panic reboot reason as kernel for hotfix
-	if (in_panic){
+	if (in_panic) {
 		//warm reset
 		qpnp_pon_system_pwr_off(PON_POWER_OFF_WARM_RESET);
-		qpnp_pon_set_restart_reason(
-					PON_RESTART_REASON_KERNEL);
+		qpnp_pon_set_restart_reason(PON_RESTART_REASON_KERNEL);
 		flush_cache_all();
 
-		/*outer_flush_all is not supported by 64bit kernel*/
-#ifndef CONFIG_ARM64
-		outer_flush_all();
-#endif
 		return;
 	}
 #endif /* CONFIG_MACH_REALME_TRINKET */
@@ -572,6 +467,7 @@ static void msm_restart_prepare(const char *cmd)
 	}
 /* OPPO 2013.07.09 hewei modify en for restart mode*/
 #endif //CONFIG_MACH_REALME_TRINKET
+
 	flush_cache_all();
 
 	/*outer_flush_all is not supported by 64bit kernel*/
@@ -803,11 +699,12 @@ static int msm_restart_probe(struct platform_device *pdev)
 	struct device_node *np;
 	int ret = 0;
 
+	atomic_notifier_chain_register(&panic_notifier_list, &panic_blk);
+
 #ifdef CONFIG_QCOM_DLOAD_MODE
 	if (scm_is_call_available(SCM_SVC_BOOT, SCM_DLOAD_CMD) > 0)
 		scm_dload_supported = true;
 
-	atomic_notifier_chain_register(&panic_notifier_list, &panic_blk);
 	np = of_find_compatible_node(NULL, NULL, DL_MODE_PROP);
 	if (!np) {
 		pr_err("unable to find DT imem DLOAD mode node\n");
@@ -909,17 +806,6 @@ skip_sysfs_create:
 
 	if (scm_is_call_available(SCM_SVC_PWR, SCM_IO_DEASSERT_PS_HOLD) > 0)
 		scm_deassert_ps_hold_supported = true;
-
-#ifdef CONFIG_MACH_REALME_TRINKET
-	/*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/15,
-	 * Add for can disable minidump by rom update
-	 */
-
-	if(romupdate_minidumpdisable){
-		download_mode = 0;
-	}
-#endif
-
 	if (!is_kdump_kernel())
 		set_dload_mode(download_mode);
 	if (!download_mode)

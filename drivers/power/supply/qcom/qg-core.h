@@ -14,11 +14,8 @@
 
 #ifdef CONFIG_MACH_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-05-04  Add for debug */
-#define qg_debug(fmt, ...) \
-        printk(KERN_NOTICE "[OPPO_CHG][%s]"fmt, __func__, ##__VA_ARGS__)
-
-#define qg_err(fmt, ...) \
-        printk(KERN_ERR "[OPPO_CHG][%s]"fmt, __func__, ##__VA_ARGS__)
+#define qg_debug(fmt, ...) do {} while(0)
+#define qg_err(fmt, ...) do {} while(0)
 #endif
 #include <linux/kernel.h>
 #include "fg-alg.h"

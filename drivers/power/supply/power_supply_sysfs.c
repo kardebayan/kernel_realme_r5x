@@ -238,7 +238,7 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(mmi_charging_enable),
 	POWER_SUPPLY_ATTR(otg_switch),
 	POWER_SUPPLY_ATTR(otg_online),
-    POWER_SUPPLY_ATTR(fast_chg_type),
+	POWER_SUPPLY_ATTR(fast_chg_type),
 	POWER_SUPPLY_ATTR(batt_fcc),
 	POWER_SUPPLY_ATTR(batt_soh),
 	POWER_SUPPLY_ATTR(batt_cc),
@@ -510,8 +510,8 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(battery_type),
 	POWER_SUPPLY_ATTR(cycle_counts),
 #ifdef CONFIG_MACH_REALME_TRINKET
-    /* Boyu.Wen  PSW.BSP.CHG  2020-1-19  for Fixed a problem with unstable torch current */
-    POWER_SUPPLY_ATTR(batt_torch),
+	/* Boyu.Wen  PSW.BSP.CHG  2020-1-19  for Fixed a problem with unstable torch current */
+	POWER_SUPPLY_ATTR(batt_torch),
 #endif
 };
 

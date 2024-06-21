@@ -1,8 +1,3 @@
-ifeq ($(CONFIG_OPPO_CHARGER_MTK),y)
-subdir-ccflags-y += -Werror
-subdir-ccflags-y += -Wno-unused-variable
-endif
-
 obj-y      += charger_ic/
 obj-y      += gauge_ic/
 obj-y      += vooc_ic/

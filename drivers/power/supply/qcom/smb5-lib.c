@@ -5835,10 +5835,6 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 	switch (apsd_result->bit) {
 	case SDP_CHARGER_BIT:
 	case CDP_CHARGER_BIT:
-#ifndef CONFIG_MACH_REALME_TRINKET
-/* Jianchao.Shi@BSP.CHG.Basic, 2018/05/11, sjc Delete for charging*/
-        case FLOAT_CHARGER_BIT:
-#endif
 		if (chg->use_extcon) {
 			if (!chg->dcin_uusb_over_gpio_en) {
 				smblib_notify_device_mode(chg, true);
@@ -5849,10 +5845,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 		}
 		break;
 	case OCP_CHARGER_BIT:
-#ifdef CONFIG_MACH_REALME_TRINKET
-/* Jianchao.Shi@BSP.CHG.Basic, 2018/05/11, sjc Add for charging*/
-        case FLOAT_CHARGER_BIT:
-#endif
+	case FLOAT_CHARGER_BIT:
 	case DCP_CHARGER_BIT:
 		break;
 	default:

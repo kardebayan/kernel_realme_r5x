@@ -91,7 +91,7 @@ enum print_reason {
 #define GPIO_DCIN_VOTER			"GPIO_DCIN_VOTER"
 #ifdef CONFIG_MACH_REALME_TRINKET
 // Kun.Zhang@BSP.CHG.Basic, 2019/04/09  add for charge
-#define DEFAULT_100MA_VOTER     "DEFAULT_100MA_VOTER"
+#define DEFAULT_100MA_VOTER		"DEFAULT_100MA_VOTER"
 #endif
 
 #define BOOST_BACK_STORM_COUNT	3
@@ -636,8 +636,6 @@ struct smb_charger {
 	int			dcin_uv_count;
 	ktime_t			dcin_uv_last_time;
 	int			last_wls_vout;
-	/* wireless */
-	int			wireless_vout;
 	/* GPIO DCIN Supply */
 	int			micro_usb_gpio;
 	int			micro_usb_irq;
@@ -648,19 +646,21 @@ struct smb_charger {
 	int			micro_usb_pre_state;
 	bool			dcin_uusb_over_gpio_en;
 	bool			aicl_disable;
+	/* wireless */
+	int			wireless_vout;
 #ifdef CONFIG_MACH_REALME_TRINKET
     /* Jianchao.Shi@BSP.CHG.Basic, 2017/08/10, sjc Add for charging */
-        int         pre_current_ma;
-        bool        is_dpdm_on_usb;
-        struct delayed_work divider_set_work;
-        struct work_struct  dpdm_set_work;
+	int			pre_current_ma;
+	bool		is_dpdm_on_usb;
+	struct delayed_work		divider_set_work;
+	struct work_struct		dpdm_set_work;
 #endif
 
 #ifdef CONFIG_MACH_REALME_TRINKET
-    /* tongfeng.Huang@BSP.CHG.Basic, 2018/09/27, sjc Add for set uart pinctrl to read chargerID */   
-        int         shipmode_id_gpio;
-        struct pinctrl      *shipmode_id_pinctrl;
-        struct pinctrl_state    *shipmode_id_active;
+	/* tongfeng.Huang@BSP.CHG.Basic, 2018/09/27, sjc Add for set uart pinctrl to read chargerID */   
+	int			shipmode_id_gpio;
+	struct pinctrl			*shipmode_id_pinctrl;
+	struct pinctrl_state	*shipmode_id_active;
 #endif
 };
 

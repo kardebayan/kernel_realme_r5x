@@ -6152,11 +6152,11 @@ static int smb5_probe(struct platform_device *pdev)
 	chg->connector_health = -EINVAL;
 	chg->otg_present = false;
 	chg->main_fcc_max = -EINVAL;
-	mutex_init(&chg->adc_lock);
 #ifdef CONFIG_MACH_REALME_TRINKET
-    /* Jianchao.Shi@BSP.CHG.Basic, 2017/08/10, sjc Add for charging */
-            chg->pre_current_ma = -1;
+	/* Jianchao.Shi@BSP.CHG.Basic, 2017/08/10, sjc Add for charging */
+	chg->pre_current_ma = -1;
 #endif
+	mutex_init(&chg->adc_lock);
 
 #ifdef CONFIG_MACH_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/22, sjc Add for charging*/

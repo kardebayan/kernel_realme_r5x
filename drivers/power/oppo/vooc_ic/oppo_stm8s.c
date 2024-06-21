@@ -18,7 +18,7 @@
 
 #define VOOC_MCU_STM8S
 
-#include <asm/uaccess.h>
+#include <linux/uaccess.h>
 #include <linux/proc_fs.h>
 #ifdef CONFIG_OPPO_CHARGER_MTK
 #include <linux/interrupt.h>
